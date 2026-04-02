@@ -106,30 +106,30 @@ Mutual Aid Board is my way of creating a digital space where people can both giv
 
 | Method | Route | Description |
 |--------|-------|-------------|
-| GET | `/api/requests` | Get all requests |
-| POST | `/api/requests` | Create a new request |
-| GET | `/api/requests/:id` | Get a single request by ID |
-| PUT | `/api/requests/:id` | Update a request |
-| DELETE | `/api/requests/:id` | Delete a request |
+| GET | `/requests` | Get all requests |
+| POST | `/requests` | Create a new request |
+| GET | `/requests/:id` | Get a single request by ID |
+| PUT | `/requests/:id` | Update a request |
+| DELETE | `/requests/:id` | Delete a request |
 
 ### Query Parameters
 
 **Filter by status:**
 ```
-GET /api/requests?status=Open
-GET /api/requests?status=Claimed
-GET /api/requests?status=Completed
+GET /requests?status=Open
+GET /requests?status=Claimed
+GET /requests?status=Completed
 ```
 
 **Filter by category:**
 ```
-GET /api/requests?category=Groceries
-GET /api/requests?category=Transportation
+GET /requests?category=Groceries
+GET /requests?category=Transportation
 ```
 
 **Search by keyword:**
 ```
-GET /api/requests?search=groceries
+GET /requests?search=groceries
 ```
 
 ## Database Schema
@@ -184,7 +184,7 @@ mutual-aid-board/
 │   │   │   ├── Navigation.css
 │   │   │   ├── RequestCard.css
 │   │   │   ├── FilterSearch.css
-│   │   │   └── ClaimModal.css
+│   │   │   ├── ClaimModal.css
 │   │   │   └── RequestForm.css
 │   │   ├── images/
 │   │   │   └── cork.png
