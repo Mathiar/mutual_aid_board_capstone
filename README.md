@@ -229,7 +229,8 @@ mutual-aid-board/
 
 ## Future Work
 
-- User authentication and accounts
+- User password resets
+- User email confirmation
 - Profile pages for requestors and helpers
 - Rating and review system
 - Notifications when requests are claimed
