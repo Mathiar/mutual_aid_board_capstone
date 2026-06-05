@@ -4,7 +4,7 @@
  * 
  */
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL || 'https://mutual-aid-board-capstone.onrender.com';
 
 // Register new user
 export const registerUser = async (userData) => {
