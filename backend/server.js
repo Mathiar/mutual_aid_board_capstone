@@ -21,9 +21,11 @@ app.use(express.json());
 app.use(cookieParser());
 
 // import CORS
-const cors = require('cors');  
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: [
+    'http://localhost:5173',
+    'https://mutual-aid-board-capstone-1.onrender.com/'  // Replace with YOUR frontend URL
+  ],
   credentials: true
 }));
 
