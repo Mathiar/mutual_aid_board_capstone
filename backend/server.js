@@ -25,7 +25,7 @@ app.use(cookieParser());
 app.use(cors({
   origin: [
     'http://localhost:5173',
-    'https://mutual-aid-board-capstone-1.onrender.com/'  // Replace with YOUR frontend URL
+    'https://mutual-aid-board-capstone-1.onrender.com'  // Replace with YOUR frontend URL
   ],
   credentials: true
 }));
