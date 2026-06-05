@@ -1,4 +1,4 @@
-/**RequestForm.js
+/**RequestForm.jsx
  * 
  * description: form component for creating new requests
  * 
@@ -7,42 +7,58 @@
 import { useState } from 'react';
 import '../styles/RequestForm.css';
 
-function RequestForm({ onAddRequest }) {
+function RequestForm({ onAddRequest, isLoggedIn }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [location, setLocation] = useState('');
-  const [requestorName, setRequestorName] = useState('');
-  const [requestorPhone, setRequestorPhone] = useState('');
-  const [requestorEmail, setRequestorEmail] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setError('');
+    setLoading(true);
 
-    const newRequest = {
-      title,
-      description,
-      category,
-      location,
-      requestorName,
-      requestorPhone,
-      requestorEmail
-    };
+    try {
+      const newRequest = {
+        title,
+        description,
+        category,
+        location
+      };
 
-    onAddRequest(newRequest);
+      await onAddRequest(newRequest);
 
-    setTitle('');
-    setDescription('');
-    setCategory('');
-    setLocation('');
-    setRequestorName('');
-    setRequestorPhone('');
-    setRequestorEmail('');
+      // clear form
+      setTitle('');
+      setDescription('');
+      setCategory('');
+      setLocation('');
+      setLoading(false);
+    } catch (err) {
+      setError(err.message || 'Failed to create request');
+      setLoading(false);
+    }
   };
+
+  if (!isLoggedIn) {
+    return (
+      <div className="request-form-container">
+        <h2>Create a New Request</h2>
+        <div className="auth-required-message">
+          <p>You must be logged in to create a request.</p>
+          <p>Please log in or create an account to continue.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="request-form-container">
       <h2>Create a New Request</h2>
+      {error && <div className="error-message">{error}</div>}
+      
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <input
@@ -52,6 +68,7 @@ function RequestForm({ onAddRequest }) {
             placeholder="Request Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            disabled={loading}
             required
           />
         </div>
@@ -63,20 +80,28 @@ function RequestForm({ onAddRequest }) {
             placeholder="Describe what you need help with"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            disabled={loading}
             required
           />
         </div>
 
         <div className="form-group">
-          <input
-            type="text"
+          <select
             id="category"
             name="category"
-            placeholder="Category (e.g., Groceries, Transportation, etc.)"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
+            disabled={loading}
             required
-          />
+          >
+            <option value="">Select a category</option>
+            <option value="Groceries">Groceries</option>
+            <option value="Transportation">Transportation</option>
+            <option value="Medical">Medical</option>
+            <option value="Household">Household</option>
+            <option value="Childcare">Childcare</option>
+            <option value="Other">Other</option>
+          </select>
         </div>
 
         <div className="form-group">
@@ -84,48 +109,15 @@ function RequestForm({ onAddRequest }) {
             type="text"
             id="location"
             name="location"
-            placeholder="Location"
+            placeholder="Location (optional)"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
+            disabled={loading}
           />
         </div>
 
-        <div className="form-group">
-          <input
-            type="text"
-            id="requestorName"
-            name="requestorName"
-            placeholder="Your Name"
-            value={requestorName}
-            onChange={(e) => setRequestorName(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <input
-            type="tel"
-            id="requestorPhone"
-            name="requestorPhone"
-            placeholder="Your Phone Number"
-            value={requestorPhone}
-            onChange={(e) => setRequestorPhone(e.target.value)}
-          />
-        </div>
-
-        <div className="form-group">
-          <input
-            type="email"
-            id="requestorEmail"
-            name="requestorEmail"
-            placeholder="Your Email"
-            value={requestorEmail}
-            onChange={(e) => setRequestorEmail(e.target.value)}
-          />
-        </div>
-
-        <button type="submit" className="submit-button">
-          Post Request
+        <button type="submit" className="submit-button" disabled={loading}>
+          {loading ? 'Posting...' : 'Post Request'}
         </button>
       </form>
     </div>

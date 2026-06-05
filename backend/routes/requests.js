@@ -4,26 +4,32 @@
  * 
  */
 
-// Import libraries
 const express = require('express');
 const router = express.Router();
 const requestController = require('../controllers/requestController');
+const authMiddleware = require('../middleware/authMiddleware');
 
-// Routes for requests
+// public routes (no auth required)
 // GET all requests
 router.get('/', requestController.getAllRequests);
 
 // GET a single request by ID
 router.get('/:id', requestController.getRequestById);
 
+// protected routes (auth required)
 // POST a new request
-router.post('/', requestController.createRequest);
+router.post('/', authMiddleware, requestController.createRequest);
+
+// PUT claim a request
+router.put('/:id/claim', authMiddleware, requestController.claimRequest);
+
+// PUT mark request as complete
+router.put('/:id/complete', authMiddleware, requestController.completeRequest);
 
 // PUT update a request
-router.put('/:id', requestController.updateRequest);
+router.put('/:id', authMiddleware, requestController.updateRequest);
 
 // DELETE a request
-router.delete('/:id', requestController.deleteRequest);
+router.delete('/:id', authMiddleware, requestController.deleteRequest);
 
-// Export the router
 module.exports = router;

@@ -1,40 +1,49 @@
 /**server.js
  * 
- * description: server file for Mutual Aid Baord
+ * description: server file for Mutual Aid Board
  * 
  */
 
-// Import libraries
+// import libraries
 const express = require('express');
 require('dotenv').config();
 require('./config/db');
 const requestRoutes = require('./routes/requests');
+const authRoutes = require('./routes/auth');
+const cookieParser = require('cookie-parser');
 
-// Create app object
+// create app object
 const app = express();
 
-// Server settings
+// server settings
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
+app.use(cookieParser());
 
-// Import CORS
+// import CORS
 const cors = require('cors');  
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true
+}));
 
-// Routes
+// routes
 app.get('/', (request, response) => {
   response.status(200).json({ message: 'Welcome to Mutual Aid Board API' });
 });
 
-// Use the requests router
+// use the auth router
+app.use('/auth', authRoutes);
+
+// use the requests router
 app.use('/requests', requestRoutes);
 
-// Catch-all route for unknown paths
+// catch-all route for unknown paths
 app.use((request, response) => {
   response.status(404).json({ message: 'Resource not found' });
 });
 
-// Start the server
+// start the server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

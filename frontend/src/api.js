@@ -1,91 +1,142 @@
 /**api.js
  * 
- * description: utility functions for calling the backend API
+ * description: API service for making requests to backend
  * 
  */
 
-const API_URL = `${import.meta.env.VITE_API_URL}/requests`;
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-// GET all requests
-export const getAllRequests = async () => {
-  try {
-    const response = await fetch(API_URL);
-    if (!response.ok) {
-      throw new Error('Failed to fetch requests');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching requests:', error);
-    return [];
+// Register new user
+export const registerUser = async (userData) => {
+  const response = await fetch(`${API_URL}/auth/register`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include', // Send cookies
+    body: JSON.stringify(userData),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Registration failed');
   }
+
+  return response.json();
 };
 
-// GET a single request by ID
-export const getRequestById = async (id) => {
-  try {
-    const response = await fetch(`${API_URL}/${id}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch request');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching request:', error);
-    return null;
+// Login user
+export const loginUser = async (credentials) => {
+  const response = await fetch(`${API_URL}/auth/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include', // Send cookies
+    body: JSON.stringify(credentials),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Login failed');
   }
+
+  return response.json();
 };
 
-// POST create a new request
+// Logout user
+export const logoutUser = async () => {
+  const response = await fetch(`${API_URL}/auth/logout`, {
+    method: 'POST',
+    credentials: 'include', // Send cookies
+  });
+
+  if (!response.ok) {
+    throw new Error('Logout failed');
+  }
+
+  return response.json();
+};
+
+// Get all requests
+export const getRequests = async () => {
+  const response = await fetch(`${API_URL}/requests`, {
+    credentials: 'include', // Send cookies
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to fetch requests');
+  }
+  
+  return response.json();
+};
+
+// Create new request
 export const createRequest = async (requestData) => {
-  try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(requestData)
-    });
-    if (!response.ok) {
-      throw new Error('Failed to create request');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error('Error creating request:', error);
-    return null;
+  const response = await fetch(`${API_URL}/requests`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include', // Send cookies
+    body: JSON.stringify(requestData),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to create request');
   }
+
+  return response.json();
 };
 
-// PUT update a request
-export const updateRequest = async (id, updatedData) => {
-  try {
-    const response = await fetch(`${API_URL}/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(updatedData)
-    });
-    if (!response.ok) {
-      throw new Error('Failed to update request');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error('Error updating request:', error);
-    return null;
+// Claim a request
+export const claimRequest = async (requestId) => {
+  const response = await fetch(`${API_URL}/requests/${requestId}/claim`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include', // Send cookies
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to claim request');
   }
+
+  return response.json();
 };
 
-// DELETE a request
-export const deleteRequest = async (id) => {
-  try {
-    const response = await fetch(`${API_URL}/${id}`, {
-      method: 'DELETE'
-    });
-    if (!response.ok) {
-      throw new Error('Failed to delete request');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error('Error deleting request:', error);
-    return null;
+// Complete a request
+export const completeRequest = async (requestId) => {
+  const response = await fetch(`${API_URL}/requests/${requestId}/complete`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include', // Send cookies
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to complete request');
   }
+
+  return response.json();
+};
+
+// Delete a request
+export const deleteRequest = async (requestId) => {
+  const response = await fetch(`${API_URL}/requests/${requestId}`, {
+    method: 'DELETE',
+    credentials: 'include', // Send cookies
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to delete request');
+  }
+
+  return response.json();
 };

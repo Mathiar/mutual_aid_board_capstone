@@ -42,7 +42,7 @@ body {
 .app-main {
   flex: 1;
   background-image: url('/src/images/cork.png');
-  background-size: 200px 200px;
+  background-size: 800px 800px;
   background-attachment: fixed;
   padding: 2rem;
   background-color: #8B7355;
@@ -64,11 +64,11 @@ body {
 }
 
 .tab-content h2 {
-  color: #667eea;
+  color: #5fe554;
   margin-top: 0;
   margin-bottom: 1.5rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-  font-size: 2rem;
+  text-shadow: 6px 6px 4px rgba(0, 0, 0, 0.3);
+  font-size: 3.5rem;
 }
 
 .tab-description {
