@@ -4,7 +4,7 @@
 
 Mutual Aid Board is a full-stack web application that facilitates community mutual aid by connecting people who need help with volunteers ready to assist. Users can post requests for help, browse open requests from their community, claim requests they're willing to help with, and track completed tasks.
 
-This project was built as my term project for CS 234W Full-Stack Web Development II at Clackamas Community College.
+This project was built as my term project for CS 297W Website Capstone at Clackamas Community College.
 
 ## Personal Background & Inspiration
 
@@ -16,6 +16,7 @@ Mutual Aid Board is my way of creating a digital space where people can both giv
 
 - **Backend:** Node.js, Express.js
 - **Database:** MongoDB Atlas with Mongoose ODM
+- **Authentication:** JWT with HttpOnly cookies, bcrypt for password hashing
 - **Environment Management:** dotenv
 - **Frontend:** React with Functional Components
 - **Styling:** Custom CSS with Google Fonts (Protest Revolution)
@@ -24,6 +25,9 @@ Mutual Aid Board is my way of creating a digital space where people can both giv
 
 ## Features
 
+- **User Registration** - Create an account with username, email, password, and optional phone
+- **User Login/Logout** - Secure authentication with HttpOnly cookies
+- **Protected Routes** - Only logged-in users can create, claim, complete, or delete requests
 - **Make a Request** - Post requests for help with title, description, category, location, and contact info
 - **Help Someone** - Browse open requests specifically looking for volunteers
 - **View All Requests** - See all requests in the system with filtering and search capabilities
@@ -49,8 +53,8 @@ Mutual Aid Board is my way of creating a digital space where people can both giv
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/MathiarI/mutual-aid-board.git
-   cd mutual-aid-board
+   git clone https://github.com/Mathiar/mutual_aid_board_capstone.git
+   cd mutual_aid_board_capstone
    ```
 
 2. **Set up the backend**
@@ -62,6 +66,8 @@ Mutual Aid Board is my way of creating a digital space where people can both giv
    Create a `.env` file in the `backend/` directory:
    ```
    MONGO_URI=mongodb+srv://<your-username>:<your-password>@<your-cluster>.mongodb.net/<your-database>
+   JWT_SECRET=your_random_secret_key_here
+   PORT=3000
    ```
 
    Start the backend server:
@@ -102,6 +108,14 @@ Mutual Aid Board is my way of creating a digital space where people can both giv
 
 ## API Routes
 
+### Authentication Endpoints
+
+| Method | Route | Description |
+|--------|-------|-------------|
+| POST | `/auth/register` | Register a new user |
+| POST | `/auth/login` | Login and receive HttpOnly cookie |
+| POST | `/auth/logout` | Logout and clear cookie |
+
 ### Requests Endpoints
 
 | Method | Route | Description |
@@ -134,6 +148,18 @@ GET /requests?search=groceries
 
 ## Database Schema
 
+**Collection:** `users`
+
+**Fields:**
+- `_id` (ObjectId) - Unique identifier
+- `username` (String, required, unique) - User's username
+- `email` (String, required, unique) - User's email
+- `password` (String, required) - Hashed password
+- `phone` (String) - Optional phone number
+- `role` (String, default: "member") - User role (member, admin)
+
+---
+
 **Collection:** `requests`
 
 **Fields:**
@@ -143,12 +169,8 @@ GET /requests?search=groceries
 - `category` (String, required) - Category (Groceries, Transportation, Medical, Household, Childcare, Other)
 - `location` (String) - Location of request
 - `status` (String, default: "Open") - Status (Open, Claimed, Completed)
-- `requestorName` (String, required) - Name of person making request
-- `requestorPhone` (String) - Contact phone number
-- `requestorEmail` (String) - Contact email address
-- `helperName` (String) - Name of volunteer helping
-- `helperPhone` (String) - Volunteer's phone number
-- `helperEmail` (String) - Volunteer's email address
+- `createdBy` (ObjectId, ref: 'User', required) - User who created the request
+- `claimedBy` (ObjectId, ref: 'User') - User who claimed the request
 - `createdTimestamp` (Date, default: now) - When request was created
 - `claimedTimestamp` (Date) - When request was claimed
 - `completedTimestamp` (Date) - When request was marked complete
@@ -160,10 +182,16 @@ mutual-aid-board/
 ├── backend/
 │   ├── config/
 │   │   └── db.js
+│   ├── controllers/
+│   │   └── authController.js
+│   ├── middleware/
+│   │   └── authMiddleware.js
 │   ├── routes/
-│   │   └── requests.js
+│   │   ├── requests.js
+│   │   └── auth.js
 │   ├── models/
-│   │   └── Request.js
+│   │   ├── Request.js
+│   │   └── User.js
 │   ├── server.js
 │   ├── .env
 │   ├── .gitignore
@@ -174,18 +202,21 @@ mutual-aid-board/
 │   │   ├── components/
 │   │   │   ├── Header.jsx
 │   │   │   ├── Navigation.jsx
+│   │   │   ├── LoginForm.jsx
+│   │   │   ├── RegisterForm.jsx
 │   │   │   ├── RequestForm.jsx
 │   │   │   ├── RequestList.jsx
 │   │   │   ├── RequestCard.jsx
-│   │   │   ├── FilterSearch.jsx
-│   │   │   └── ClaimModal.jsx
+│   │   │   └── FilterSearch.jsx
 │   │   ├── styles/
+│   │   │   ├── AuthForms.css
 │   │   │   ├── RequestList.css
 │   │   │   ├── Navigation.css
 │   │   │   ├── RequestCard.css
 │   │   │   ├── FilterSearch.css
-│   │   │   ├── ClaimModal.css
 │   │   │   └── RequestForm.css
+│   │   ├── utils/
+│   │   │   └── authUtils.js
 │   │   ├── images/
 │   │   │   └── cork.png
 │   │   ├── api.js
@@ -210,7 +241,7 @@ mutual-aid-board/
 ## Author
 
 **Justin Rybacki**
-Clackamas Community College | CS 234W Full-Stack Web Development II | Winter 2026
+Clackamas Community College | CS 297W Website Capstone | Spring 2026
 
 ## License
 
